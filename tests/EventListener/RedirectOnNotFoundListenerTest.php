@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Zenstruck\RedirectBundle\EventListener\RedirectOnNotFoundListener;
 use Zenstruck\RedirectBundle\Service\RedirectManager;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

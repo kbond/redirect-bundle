@@ -19,7 +19,7 @@ class ZenstruckRedirectExtension extends ConfigurableExtension
             throw new InvalidConfigurationException('A "redirect_class" or "not_found_class" must be set for "zenstruck_redirect".');
         }
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
         $modelManagerName = $mergedConfig['model_manager_name'] ?: 'default';
 
         $container->setAlias('zenstruck_redirect.entity_manager', \sprintf('doctrine.orm.%s_entity_manager', $modelManagerName));

@@ -2,36 +2,75 @@
 
 namespace Zenstruck\RedirectBundle\Tests\Fixture;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Psr\Log\NullLogger;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Zenstruck\Foundry\ZenstruckFoundryBundle;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
+use Zenstruck\RedirectBundle\ZenstruckRedirectBundle;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class TestKernel extends Kernel
+final class TestKernel extends Kernel
 {
+    use MicroKernelTrait;
+
     public function registerBundles(): iterable
     {
-        return [
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-            new \Zenstruck\RedirectBundle\ZenstruckRedirectBundle(),
-            new \Zenstruck\RedirectBundle\Tests\Fixture\Bundle\TestBundle(),
-        ];
+        yield new FrameworkBundle();
+        yield new DoctrineBundle();
+        yield new ZenstruckFoundryBundle();
+        yield new ZenstruckRedirectBundle();
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader): void
+    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader): void
     {
-        $loader->load(\sprintf('%s/config.yml', __DIR__));
+        $c->loadFromExtension('framework', [
+            'http_method_override' => false,
+            'translator' => ['fallbacks' => 'en'],
+            'secret' => 'S3CRET',
+            'router' => ['utf8' => true],
+            'test' => true,
+            'validation' => true,
+        ]);
+
+        $c->loadFromExtension('zenstruck_redirect', [
+            'redirect_class' => DummyRedirect::class,
+            'not_found_class' => DummyNotFound::class,
+        ]);
+
+        $c->loadFromExtension('zenstruck_foundry', [
+            'auto_refresh_proxies' => true,
+        ]);
+
+        $c->loadFromExtension('doctrine', [
+            'dbal' => ['url' => 'sqlite:///%kernel.project_dir%/var/data.db'],
+            'orm' => [
+                'auto_generate_proxy_classes' => true,
+                'auto_mapping' => true,
+                'mappings' => [
+                    'Test' => [
+                        'is_bundle' => false,
+                        'type' => 'attribute',
+                        'dir' => '%kernel.project_dir%/tests/Fixture/Entity',
+                        'prefix' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity',
+                        'alias' => 'Test',
+                    ],
+                ],
+            ],
+        ]);
+
+        $c->register('logger', NullLogger::class); // disable logging
     }
 
-    public function getCacheDir(): string
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        return \sys_get_temp_dir().'/ZenstruckRedirectBundle/'.Kernel::VERSION.'/cache/'.$this->environment;
-    }
-
-    public function getLogDir(): string
-    {
-        return \sys_get_temp_dir().'/ZenstruckRedirectBundle/'.Kernel::VERSION.'/logs';
     }
 }

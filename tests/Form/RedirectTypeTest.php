@@ -5,7 +5,7 @@ namespace Zenstruck\RedirectBundle\Tests\Form;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Zenstruck\RedirectBundle\Form\Type\RedirectType;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -18,7 +18,7 @@ class RedirectTypeTest extends TypeTestCase
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
-            ->addType(new RedirectType('Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect'))
+            ->addType(new RedirectType('Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect'))
             ->getFormFactory()
         ;
     }
@@ -59,7 +59,7 @@ class RedirectTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
 
         $redirect = $form->getData();
-        $this->assertInstanceOf('Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect', $redirect);
+        $this->assertInstanceOf('Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect', $redirect);
         $this->assertSame('/foo', $redirect->getSource());
         $this->assertSame('/bar', $redirect->getDestination());
     }
@@ -78,7 +78,7 @@ class RedirectTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
 
         $redirect = $form->getData();
-        $this->assertInstanceOf('Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect', $redirect);
+        $this->assertInstanceOf('Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect', $redirect);
         $this->assertSame('/foo', $redirect->getSource());
         $this->assertSame('/bar', $redirect->getDestination());
     }

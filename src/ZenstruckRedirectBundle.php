@@ -15,15 +15,14 @@ class ZenstruckRedirectBundle extends Bundle
     {
         parent::build($container);
 
-        $this->addRegisterMappingsPass($container);
+        $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver(
+            [__DIR__.'/../config/doctrine/mapping' => 'Zenstruck\RedirectBundle\Model'],
+            enableXsdValidation: true,
+        ));
     }
 
-    private function addRegisterMappingsPass(ContainerBuilder $container): void
+    public function getPath(): string
     {
-        $mappings = [
-            \realpath(__DIR__.'/Resources/config/doctrine-mapping') => 'Zenstruck\RedirectBundle\Model',
-        ];
-
-        $container->addCompilerPass(DoctrineOrmMappingsPass::createXmlMappingDriver($mappings));
+        return \dirname(__DIR__);
     }
 }

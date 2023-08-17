@@ -13,7 +13,7 @@ use Zenstruck\RedirectBundle\Service\NotFoundManager;
  */
 class NotFoundManagerTest extends TestCase
 {
-    public const NOT_FOUND_DUMMY_CLASS = 'Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyNotFound';
+    public const NOT_FOUND_DUMMY_CLASS = 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound';
 
     /** @var MockObject&ObjectManager */
     private $om;

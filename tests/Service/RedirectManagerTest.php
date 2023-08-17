@@ -7,14 +7,14 @@ use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Zenstruck\RedirectBundle\Service\RedirectManager;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 class RedirectManagerTest extends TestCase
 {
-    public const REDIRECT_DUMMY_CLASS = 'Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect';
+    public const REDIRECT_DUMMY_CLASS = 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect';
 
     /** @var MockObject&ObjectManager */
     private $om;

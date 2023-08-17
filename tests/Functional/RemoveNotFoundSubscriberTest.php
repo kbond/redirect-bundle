@@ -2,36 +2,35 @@
 
 namespace Zenstruck\RedirectBundle\Tests\Functional;
 
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyNotFound;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
+use function Zenstruck\Foundry\create;
+use function Zenstruck\Foundry\repository;
 
-/**
- * @author Kevin Bond <kevinbond@gmail.com>
- */
-class RemoveNotFoundSubscriberTest extends FunctionalTest
+class RemoveNotFoundSubscriberTest extends KernelTestCase
 {
-    public function addTestData(): void
+    use ResetDatabase, Factories;
+
+    protected function setUp(): void
     {
-        parent::addTestData();
-
-        $this->em->persist(new DummyNotFound('/foo', 'http://example.com/foo'));
-        $this->em->persist(new DummyNotFound('/foo', 'http://example.com/foo?bar=foo'));
-        $this->em->persist(new DummyNotFound('/bar', 'http://example.com/bar'));
-
-        $this->em->flush();
+        create(DummyNotFound::class, ['path' => '/foo', 'fullUrl' => 'http://example.com/foo']);
+        create(DummyNotFound::class, ['path' => '/foo', 'fullUrl' => 'http://example.com/foo?bar=foo']);
+        create(DummyNotFound::class, ['path' => '/bar', 'fullUrl' => 'http://example.com/bar']);
     }
 
     /**
      * @test
      */
-    public function delete_not_found_on_create_redirect()
+    public function delete_not_found_on_create_redirect(): void
     {
-        $this->assertCount(3, $this->getNotFounds());
+        repository(DummyNotFound::class)->assert()->count(3);
 
-        $this->em->persist(new DummyRedirect('/foo', '/bar'));
-        $this->em->flush();
+        create(DummyRedirect::class, ['source' => '/foo', 'destination' => '/bar']);
 
-        $this->assertCount(1, $this->getNotFounds());
+        repository(DummyNotFound::class)->assert()->count(1);
     }
 
     /**
@@ -39,12 +38,13 @@ class RemoveNotFoundSubscriberTest extends FunctionalTest
      */
     public function delete_not_found_on_update_redirect()
     {
-        $this->assertCount(3, $this->getNotFounds());
+        $redirect = create(DummyRedirect::class, ['source' => '/original', 'destination' => '/bar']);
 
-        $redirect = $this->getRedirect('/301-redirect');
+        repository(DummyNotFound::class)->assert()->count(3);
+
         $redirect->setSource('/foo');
-        $this->em->flush();
+        $redirect->save();
 
-        $this->assertCount(1, $this->getNotFounds());
+        repository(DummyNotFound::class)->assert()->count(1);
     }
 }

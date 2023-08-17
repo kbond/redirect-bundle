@@ -3,8 +3,8 @@
 namespace Zenstruck\RedirectBundle\Tests\Model;
 
 use PHPUnit\Framework\TestCase;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyNotFound;
-use Zenstruck\RedirectBundle\Tests\Fixture\Bundle\Entity\DummyRedirect;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

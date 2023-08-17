@@ -2,25 +2,38 @@
 
 namespace Zenstruck\RedirectBundle\Tests\Functional;
 
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Browser\Test\HasBrowser;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound;
+
+use function Zenstruck\Foundry\repository;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class NotFoundTest extends FunctionalTest
+class NotFoundTest extends KernelTestCase
 {
+    use ResetDatabase, Factories, HasBrowser;
+
     /**
      * @test
      */
     public function not_found_created()
     {
-        $this->assertCount(0, $this->getNotFounds());
+        $repo = repository(DummyNotFound::class);
 
-        $this->client->request('GET', '/not-found?foo=bar');
+        $repo->assert()->count(0);
 
-        $notFounds = $this->getNotFounds();
+        $this->browser()->visit('/not-found?foo=bar');
 
-        $this->assertCount(1, $notFounds);
-        $this->assertSame('/not-found', $notFounds[0]->getPath());
-        $this->assertSame('http://localhost/not-found?foo=bar', $notFounds[0]->getFullUrl());
-        $this->assertNull($notFounds[0]->getReferer());
+        $repo->assert()->count(1);
+
+        $notFound = $repo->first();
+
+        $this->assertSame('/not-found', $notFound->getPath());
+        $this->assertSame('http://localhost/not-found?foo=bar', $notFound->getFullUrl());
+        $this->assertNull($notFound->getReferer());
     }
 }

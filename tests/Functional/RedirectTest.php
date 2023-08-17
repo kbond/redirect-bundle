@@ -2,33 +2,51 @@
 
 namespace Zenstruck\RedirectBundle\Tests\Functional;
 
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Browser\Test\HasBrowser;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
+use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
+
+use function Zenstruck\Foundry\create;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RedirectTest extends FunctionalTest
+class RedirectTest extends KernelTestCase
 {
+    use ResetDatabase, Factories, HasBrowser;
+
     /**
      * @test
      */
-    public function test301_redirect()
+    public function redirect_301()
     {
-        $this->assertSame(0, $this->getRedirect('/301-redirect')->getCount());
+        $redirect = create(DummyRedirect::class, [
+            'source' => '/301-redirect',
+            'destination' => 'https://symfony.com',
+        ]);
 
-        $this->client->followRedirects(false);
-        $this->client->request('GET', '/301-redirect');
-        $response = $this->client->getResponse();
+        $this->assertSame(0, $redirect->getCount());
+        $this->assertNull($redirect->getLastAccessed());
 
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertSame('http://symfony.com', $response->getTargetUrl());
-        $this->assertSame(301, $response->getStatusCode());
-        $this->assertSame(1, $this->getRedirect('/301-redirect')->getCount());
+        $browser = $this->browser()
+            ->interceptRedirects()
+            ->visit('/301-redirect')
+            ->assertStatus(301)
+            ->assertRedirectedTo('https://symfony.com')
+        ;
 
-        $this->client->request('GET', '/301-redirect?foo=bar');
-        $response = $this->client->getResponse();
+        $this->assertSame(1, $redirect->getCount());
+        $this->assertNotNull($redirect->getLastAccessed());
 
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertSame('http://symfony.com', $response->getTargetUrl());
-        $this->assertSame(2, $this->getRedirect('/301-redirect')->getCount());
+        $browser
+            ->visit('/301-redirect?foo=bar')
+            ->assertRedirectedTo('https://symfony.com')
+        ;
+
+        $this->assertSame(2, $redirect->getCount());
+        $this->assertNotNull($redirect->getLastAccessed());
     }
 
     /**
@@ -36,15 +54,23 @@ class RedirectTest extends FunctionalTest
      */
     public function test302_redirect()
     {
-        $this->assertSame(0, $this->getRedirect('/302-redirect')->getCount());
+        $redirect = create(DummyRedirect::class, [
+            'source' => '/302-redirect',
+            'destination' => 'https://symfony.com',
+            'permanent' => false,
+        ]);
 
-        $this->client->followRedirects(false);
-        $this->client->request('GET', '/302-redirect');
-        $response = $this->client->getResponse();
+        $this->assertSame(0, $redirect->getCount());
+        $this->assertNull($redirect->getLastAccessed());
 
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
-        $this->assertSame('http://example.com', $response->getTargetUrl());
-        $this->assertSame(302, $response->getStatusCode());
-        $this->assertSame(1, $this->getRedirect('/302-redirect')->getCount());
+        $this->browser()
+            ->interceptRedirects()
+            ->visit('/302-redirect')
+            ->assertStatus(302)
+            ->assertRedirectedTo('https://symfony.com')
+        ;
+
+        $this->assertSame(1, $redirect->getCount());
+        $this->assertNotNull($redirect->getLastAccessed());
     }
 }
