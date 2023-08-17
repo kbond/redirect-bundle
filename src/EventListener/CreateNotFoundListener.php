@@ -11,8 +11,8 @@
 
 namespace Zenstruck\RedirectBundle\EventListener;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Zenstruck\RedirectBundle\Service\NotFoundManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -21,7 +21,7 @@ use Zenstruck\RedirectBundle\Service\NotFoundManager;
  */
 final class CreateNotFoundListener extends NotFoundListener
 {
-    public function __construct(private NotFoundManager $notFoundManager)
+    public function __construct(private ContainerInterface $container)
     {
     }
 
@@ -31,6 +31,6 @@ final class CreateNotFoundListener extends NotFoundListener
             return;
         }
 
-        $this->notFoundManager->createFromRequest($event->getRequest());
+        $this->container->get('manager')->createFromRequest($event->getRequest());
     }
 }

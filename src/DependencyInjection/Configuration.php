@@ -13,6 +13,8 @@ namespace Zenstruck\RedirectBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Zenstruck\RedirectBundle\Model\NotFound;
+use Zenstruck\RedirectBundle\Model\Redirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -32,22 +34,21 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('redirect_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(fn($value) => !\is_subclass_of($value, 'Zenstruck\RedirectBundle\Model\Redirect'))
-                        ->thenInvalid('"redirect_class" must be an instance of "Zenstruck\RedirectBundle\Model\Redirect"')
+                        ->ifTrue(fn($value) => !\is_subclass_of($value, Redirect::class))
+                        ->thenInvalid(\sprintf('"redirect_class" must be an instance of "%s"', Redirect::class))
                     ->end()
                 ->end()
                 ->scalarNode('not_found_class')
                     ->defaultNull()
                     ->validate()
-                        ->ifTrue(fn($value) => !\is_subclass_of($value, 'Zenstruck\RedirectBundle\Model\NotFound'))
-                        ->thenInvalid('"not_found_class" must be an instance of "Zenstruck\RedirectBundle\Model\NotFound"')
+                        ->ifTrue(fn($value) => !\is_subclass_of($value, NotFound::class))
+                        ->thenInvalid(\sprintf('"not_found_class" must be an instance of "%s"', NotFound::class))
                     ->end()
                 ->end()
                 ->booleanNode('remove_not_founds')
                     ->info('When enabled, when a redirect is updated or created, the NotFound entites with a matching path are removed.')
-                    ->defaultTrue()
+                    ->defaultNull()
                 ->end()
-                ->scalarNode('model_manager_name')->defaultNull()->end()
             ->end()
         ;
 

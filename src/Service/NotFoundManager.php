@@ -11,6 +11,7 @@
 
 namespace Zenstruck\RedirectBundle\Service;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\RedirectBundle\Model\NotFound;
@@ -22,9 +23,9 @@ use Zenstruck\RedirectBundle\Model\Redirect;
 class NotFoundManager
 {
     /**
-     * @param string $class The NotFound class name
+     * @param class-string<NotFound> $class
      */
-    public function __construct(private string $class, private ObjectManager $om)
+    public function __construct(private string $class, private ManagerRegistry $doctrine)
     {
     }
 
@@ -36,8 +37,10 @@ class NotFoundManager
             $request->server->get('HTTP_REFERER')
         );
 
-        $this->om->persist($notFound);
-        $this->om->flush();
+        $om = $this->om();
+
+        $om->persist($notFound);
+        $om->flush();
 
         return $notFound;
     }
@@ -47,12 +50,18 @@ class NotFoundManager
      */
     public function removeForRedirect(Redirect $redirect): void
     {
-        $notFounds = $this->om->getRepository($this->class)->findBy(['path' => $redirect->getSource()]);
+        $om = $this->om();
+        $notFounds = $om->getRepository($this->class)->findBy(['path' => $redirect->getSource()]);
 
         foreach ($notFounds as $notFound) {
-            $this->om->remove($notFound);
+            $om->remove($notFound);
         }
 
-        $this->om->flush();
+        $om->flush();
+    }
+
+    private function om(): ObjectManager
+    {
+        return $this->doctrine->getManagerForClass($this->class) ?? throw new \LogicException(\sprintf('No manager found for class "%s".', $this->class));
     }
 }

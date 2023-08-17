@@ -11,6 +11,7 @@
 
 namespace Zenstruck\RedirectBundle\Service;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Zenstruck\RedirectBundle\Model\Redirect;
 
@@ -20,25 +21,30 @@ use Zenstruck\RedirectBundle\Model\Redirect;
 class RedirectManager
 {
     /**
-     * @param string $class The Redirect class name
+     * @param class-string<Redirect> $class
      */
-    public function __construct(private string $class, private ObjectManager $om)
+    public function __construct(private string $class, private ManagerRegistry $doctrine)
     {
     }
 
     public function findAndUpdate(string $source): ?Redirect
     {
-        /** @var Redirect|null $redirect */
-        $redirect = $this->om->getRepository($this->class)->findOneBy(['source' => $source]);
+        $om = $this->om();
 
-        if (null === $redirect) {
+        if (!$redirect = $om->getRepository($this->class)->findOneBy(['source' => $source])) {
             return null;
         }
 
+        /** @var Redirect|null $redirect */
         $redirect->increaseCount();
         $redirect->updateLastAccessed();
-        $this->om->flush();
+        $om->flush();
 
         return $redirect;
+    }
+
+    private function om(): ObjectManager
+    {
+        return $this->doctrine->getManagerForClass($this->class) ?? throw new \LogicException(\sprintf('No manager found for class "%s".', $this->class));
     }
 }

@@ -11,9 +11,9 @@
 
 namespace Zenstruck\RedirectBundle\EventListener;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Zenstruck\RedirectBundle\Service\RedirectManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -22,7 +22,7 @@ use Zenstruck\RedirectBundle\Service\RedirectManager;
  */
 final class RedirectOnNotFoundListener extends NotFoundListener
 {
-    public function __construct(private RedirectManager $redirectManager)
+    public function __construct(private ContainerInterface $container)
     {
     }
 
@@ -32,7 +32,7 @@ final class RedirectOnNotFoundListener extends NotFoundListener
             return;
         }
 
-        $redirect = $this->redirectManager->findAndUpdate($event->getRequest()->getPathInfo());
+        $redirect = $this->container->get('manager')->findAndUpdate($event->getRequest()->getPathInfo());
 
         if (null === $redirect) {
             return;

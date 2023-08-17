@@ -15,6 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Zenstruck\RedirectBundle\Model\Redirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -22,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class RedirectType extends AbstractType
 {
     /**
-     * @param string $class The Redirect class name
+     * @param class-string<Redirect> $class
      */
     public function __construct(private string $class)
     {

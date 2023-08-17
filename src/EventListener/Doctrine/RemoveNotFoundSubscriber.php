@@ -12,9 +12,8 @@
 namespace Zenstruck\RedirectBundle\EventListener\Doctrine;
 
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Zenstruck\RedirectBundle\Model\Redirect;
-use Zenstruck\RedirectBundle\Service\NotFoundManager;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -23,8 +22,6 @@ use Zenstruck\RedirectBundle\Service\NotFoundManager;
  */
 final class RemoveNotFoundSubscriber
 {
-    private NotFoundManager|null $notFoundManager = null;
-
     public function __construct(private ContainerInterface $container)
     {
     }
@@ -47,15 +44,6 @@ final class RemoveNotFoundSubscriber
             return;
         }
 
-        $this->getNotFoundManager()->removeForRedirect($entity);
-    }
-
-    private function getNotFoundManager(): NotFoundManager
-    {
-        if (null === $this->notFoundManager) {
-            $this->notFoundManager = $this->container->get('zenstruck_redirect.not_found_manager');
-        }
-
-        return $this->notFoundManager;
+        $this->container->get('manager')->removeForRedirect($entity);
     }
 }
