@@ -24,7 +24,7 @@ abstract class Redirect
 
     protected int $count = 0;
 
-    protected ?\DateTime $lastAccessed = null;
+    protected ?\DateTimeImmutable $lastAccessed = null;
 
     public function __construct(?string $source, ?string $destination, bool $permanent = true)
     {
@@ -92,18 +92,14 @@ abstract class Redirect
         $this->count += $amount;
     }
 
-    public function getLastAccessed(): ?\DateTime
+    public function getLastAccessed(): ?\DateTimeImmutable
     {
         return $this->lastAccessed;
     }
 
-    public function updateLastAccessed(?\DateTime $time = null): void
+    public function updateLastAccessed(?\DateTimeImmutable $time = null): void
     {
-        if (null === $time) {
-            $time = new \DateTime('now');
-        }
-
-        $this->lastAccessed = $time;
+        $this->lastAccessed = $time ?? new \DateTimeImmutable('now');
     }
 
     protected function createAbsoluteUri(string $path, bool $allowQueryString = false): string

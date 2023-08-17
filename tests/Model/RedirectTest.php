@@ -52,7 +52,7 @@ final class RedirectTest extends TestCase
         $this->assertNull($redirect->getLastAccessed());
 
         $redirect->updateLastAccessed();
-        $this->assertInstanceOf('DateTime', $redirect->getLastAccessed());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $redirect->getLastAccessed());
         $this->assertEqualsWithDelta(\time(), $redirect->getLastAccessed()->format('U'), 1);
     }
 

@@ -18,14 +18,14 @@ abstract class NotFound
 {
     protected ?string $path;
 
-    protected ?\DateTime $timestamp;
+    protected ?\DateTimeImmutable $timestamp;
 
     protected ?string $referer;
 
-    public function __construct(?string $path, protected ?string $fullUrl, ?string $referer = null, ?\DateTime $timestamp = null)
+    public function __construct(?string $path, protected ?string $fullUrl, ?string $referer = null, ?\DateTimeImmutable $timestamp = null)
     {
         if (null === $timestamp) {
-            $timestamp = new \DateTime('now');
+            $timestamp = new \DateTimeImmutable('now');
         }
 
         $path = \trim($path);
@@ -56,7 +56,7 @@ abstract class NotFound
         return $this->fullUrl;
     }
 
-    public function getTimestamp(): \DateTime
+    public function getTimestamp(): \DateTimeImmutable
     {
         return $this->timestamp;
     }

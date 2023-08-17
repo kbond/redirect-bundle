@@ -9,6 +9,6 @@
         <field name="destination" column="destination" type="string" length="255" />
         <field name="permanent" column="permanent" type="boolean" />
         <field name="count" type="integer" />
-        <field name="lastAccessed" column="last_accessed" type="datetime" nullable="true" />
+        <field name="lastAccessed" column="last_accessed" type="datetime_immutable" nullable="true" />
     </mapped-superclass>
 </doctrine-mapping>

@@ -8,6 +8,6 @@
         <field name="path" column="path" type="string" length="255" />
         <field name="fullUrl" column="full_url" type="string" length="255" />
         <field name="referer" column="referer" type="string" length="255" nullable="true" />
-        <field name="timestamp" column="timestamp" type="datetime" />
+        <field name="timestamp" column="timestamp" type="datetime_immutable" />
     </mapped-superclass>
 </doctrine-mapping>
