@@ -1,22 +1,31 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\Model;
 
 use PHPUnit\Framework\TestCase;
+use Zenstruck\RedirectBundle\Model\Redirect;
 use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound;
 use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RedirectTest extends TestCase
+final class RedirectTest extends TestCase
 {
     /**
-     * @dataProvider sourceProvider
-     *
      * @test
+     * @dataProvider sourceProvider
      */
-    public function set_source($source, $expected)
+    public function set_source($source, $expected): void
     {
         $redirect = $this->createRedirect($source, '/foo');
 
@@ -24,11 +33,10 @@ class RedirectTest extends TestCase
     }
 
     /**
-     * @dataProvider destinationProvider
-     *
      * @test
+     * @dataProvider destinationProvider
      */
-    public function set_destination($destination, $expectedDestination)
+    public function set_destination($destination, $expectedDestination): void
     {
         $redirect = $this->createRedirect('/', $destination);
 
@@ -38,7 +46,7 @@ class RedirectTest extends TestCase
     /**
      * @test
      */
-    public function get_last_accessed_at()
+    public function get_last_accessed_at(): void
     {
         $redirect = $this->createRedirect('/', '/');
         $this->assertNull($redirect->getLastAccessed());
@@ -51,7 +59,7 @@ class RedirectTest extends TestCase
     /**
      * @test
      */
-    public function increase_count()
+    public function increase_count(): void
     {
         $redirect = $this->createRedirect('/', '/');
 
@@ -67,48 +75,44 @@ class RedirectTest extends TestCase
     /**
      * @test
      */
-    public function create_from_not_found()
+    public function create_from_not_found(): void
     {
         $redirect = DummyRedirect::createFromNotFound(new DummyNotFound('/foo', 'https://example.com/foo'), '/baz');
 
         $this->assertSame('/foo', $redirect->getSource());
     }
 
-    public function sourceProvider(): array
+    public static function sourceProvider(): iterable
     {
-        return [
-            ['foo/bar', '/foo/bar'],
-            ['/foo/bar/', '/foo/bar/'],
-            ['foo', '/foo'],
-            ['foo/bar ', '/foo/bar'],
-            [' foo/bar/', '/foo/bar/'],
-            ['   /foo', '/foo'],
-            ['http://www.example.com/foo', '/foo'],
-            ['http://www.example.com/', '/'],
-            ['http://www.example.com', '/'],
-            ['foo/bar?baz=true', '/foo/bar'],
-            ['http://www.example.com/foo?baz=bar&foo=baz', '/foo'],
-            ['http://www.example.com/foo?baz=bar&foo=baz#baz', '/foo'],
-            ['/', '/'],
-            ['', null],
-        ];
+        yield ['foo/bar', '/foo/bar'];
+        yield ['/foo/bar/', '/foo/bar/'];
+        yield ['foo', '/foo'];
+        yield ['foo/bar ', '/foo/bar'];
+        yield [' foo/bar/', '/foo/bar/'];
+        yield ['   /foo', '/foo'];
+        yield ['http://www.example.com/foo', '/foo'];
+        yield ['http://www.example.com/', '/'];
+        yield ['http://www.example.com', '/'];
+        yield ['foo/bar?baz=true', '/foo/bar'];
+        yield ['http://www.example.com/foo?baz=bar&foo=baz', '/foo'];
+        yield ['http://www.example.com/foo?baz=bar&foo=baz#baz', '/foo'];
+        yield ['/', '/'];
+        yield ['', null];
     }
 
-    public function destinationProvider(): array
+    public static function destinationProvider(): iterable
     {
-        return [
-            ['/foo', '/foo'],
-            ['foo', '/foo'],
-            ['foo?bar=baz', '/foo?bar=baz'],
-            ['http://www.example.com/foo', 'http://www.example.com/foo'],
-            ['', null],
-        ];
+        yield ['/foo', '/foo'];
+        yield ['foo', '/foo'];
+        yield ['foo?bar=baz', '/foo?bar=baz'];
+        yield ['http://www.example.com/foo', 'http://www.example.com/foo'];
+        yield ['', null];
     }
 
-    private function createRedirect(string $source, string $destination, bool $permanent = true): \Zenstruck\RedirectBundle\Model\Redirect
+    private function createRedirect(string $source, string $destination, bool $permanent = true): Redirect
     {
         return $this->getMockForAbstractClass(
-            'Zenstruck\RedirectBundle\Model\Redirect',
+            Redirect::class,
             [$source, $destination, $permanent]
         );
     }

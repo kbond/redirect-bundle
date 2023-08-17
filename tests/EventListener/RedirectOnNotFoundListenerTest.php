@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\EventListener;
 
 use PHPUnit\Framework\MockObject\MockObject;
@@ -12,7 +21,7 @@ use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RedirectOnNotFoundListenerTest extends NotFoundListenerTest
+final class RedirectOnNotFoundListenerTest extends NotFoundListenerTest
 {
     /** @var MockObject&RedirectManager */
     private $redirectManager;
@@ -26,7 +35,7 @@ class RedirectOnNotFoundListenerTest extends NotFoundListenerTest
     /**
      * @test
      */
-    public function handle_redirect()
+    public function handle_redirect(): void
     {
         $this->redirectManager->expects($this->once())
             ->method('findAndUpdate')
@@ -47,7 +56,7 @@ class RedirectOnNotFoundListenerTest extends NotFoundListenerTest
     /**
      * @test
      */
-    public function cannot_handle_redirect()
+    public function cannot_handle_redirect(): void
     {
         $this->redirectManager->expects($this->once())
             ->method('findAndUpdate')

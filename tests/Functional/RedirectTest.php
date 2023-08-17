@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -13,14 +22,14 @@ use function Zenstruck\Foundry\create;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RedirectTest extends KernelTestCase
+final class RedirectTest extends KernelTestCase
 {
-    use ResetDatabase, Factories, HasBrowser;
+    use Factories, HasBrowser, ResetDatabase;
 
     /**
      * @test
      */
-    public function redirect_301()
+    public function redirect_301(): void
     {
         $redirect = create(DummyRedirect::class, [
             'source' => '/301-redirect',
@@ -52,7 +61,7 @@ class RedirectTest extends KernelTestCase
     /**
      * @test
      */
-    public function test302_redirect()
+    public function redirect_302(): void
     {
         $redirect = create(DummyRedirect::class, [
             'source' => '/302-redirect',

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\EventListener;
 
 use PHPUnit\Framework\MockObject\MockObject;
@@ -11,7 +20,7 @@ use Zenstruck\RedirectBundle\Service\NotFoundManager;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class CreateNotFoundListenerTest extends NotFoundListenerTest
+final class CreateNotFoundListenerTest extends NotFoundListenerTest
 {
     /** @var MockObject&NotFoundManager */
     private $notFoundManager;
@@ -25,7 +34,7 @@ class CreateNotFoundListenerTest extends NotFoundListenerTest
     /**
      * @test
      */
-    public function creates_not_found()
+    public function creates_not_found(): void
     {
         $request = Request::create('/foo/bar');
 

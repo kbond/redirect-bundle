@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\Form;
 
 use Symfony\Component\Form\Forms;
@@ -10,7 +19,7 @@ use Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class RedirectTypeTest extends TypeTestCase
+final class RedirectTypeTest extends TypeTestCase
 {
     protected function setUp(): void
     {
@@ -26,7 +35,7 @@ class RedirectTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function create_default()
+    public function create_default(): void
     {
         $form = $this->factory->create(RedirectType::class);
 
@@ -38,7 +47,7 @@ class RedirectTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function create_with_options()
+    public function create_with_options(): void
     {
         $form = $this->factory->create(RedirectType::class, null, ['disable_source' => true]);
         $this->assertTrue($form->get('source')->isDisabled());
@@ -47,7 +56,7 @@ class RedirectTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function submit_update()
+    public function submit_update(): void
     {
         $redirect = new DummyRedirect('/baz', 'http://example.com');
         $form = $this->factory->create(RedirectType::class, $redirect);
@@ -67,7 +76,7 @@ class RedirectTypeTest extends TypeTestCase
     /**
      * @test
      */
-    public function submit_create()
+    public function submit_create(): void
     {
         $form = $this->factory->create(RedirectType::class);
         $formData = [

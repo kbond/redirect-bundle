@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
@@ -9,12 +18,12 @@ use Zenstruck\RedirectBundle\DependencyInjection\ZenstruckRedirectExtension;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
+final class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
 {
     /**
      * @test
      */
-    public function no_classes_set()
+    public function no_classes_set(): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('A "redirect_class" or "not_found_class" must be set for "zenstruck_redirect".');
@@ -26,7 +35,7 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function redirect_class()
+    public function redirect_class(): void
     {
         $this->load(['redirect_class' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect']);
         $this->compile();
@@ -40,7 +49,7 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function custom_model_manager_name()
+    public function custom_model_manager_name(): void
     {
         $this->load([
             'redirect_class' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyRedirect',
@@ -54,7 +63,7 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function not_found_class()
+    public function not_found_class(): void
     {
         $this->load(['not_found_class' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound']);
         $this->compile();
@@ -67,7 +76,7 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function remove_not_found_subscriber()
+    public function remove_not_found_subscriber(): void
     {
         $this->load([
             'not_found_class' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound',
@@ -81,7 +90,7 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     /**
      * @test
      */
-    public function disable_remove_not_found_subscriber()
+    public function disable_remove_not_found_subscriber(): void
     {
         $this->load([
             'not_found_class' => 'Zenstruck\RedirectBundle\Tests\Fixture\Entity\DummyNotFound',
@@ -94,11 +103,10 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     }
 
     /**
-     * @dataProvider invalidClassProvider
-     *
      * @test
+     * @dataProvider invalidClassProvider
      */
-    public function invalid_redirect_class($class)
+    public function invalid_redirect_class($class): void
     {
         $this->expectException(InvalidConfigurationException::class);
 
@@ -106,23 +114,20 @@ class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
     }
 
     /**
-     * @dataProvider invalidClassProvider
-     *
      * @test
+     * @dataProvider invalidClassProvider
      */
-    public function invalid_not_found_class($class)
+    public function invalid_not_found_class($class): void
     {
         $this->expectException(InvalidConfigurationException::class);
 
         $this->load(['not_found_class' => $class]);
     }
 
-    public function invalidClassProvider(): array
+    public static function invalidClassProvider(): iterable
     {
-        return [
-            ['Foo\Bar'],
-            [static::class],
-        ];
+        yield ['Foo\Bar'];
+        yield [static::class];
     }
 
     protected function getContainerExtensions(): array

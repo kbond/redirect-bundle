@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the zenstruck/redirect-bundle package.
+ *
+ * (c) Kevin Bond <kevinbond@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zenstruck\RedirectBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -13,14 +22,14 @@ use function Zenstruck\Foundry\repository;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-class NotFoundTest extends KernelTestCase
+final class NotFoundTest extends KernelTestCase
 {
-    use ResetDatabase, Factories, HasBrowser;
+    use Factories, HasBrowser, ResetDatabase;
 
     /**
      * @test
      */
-    public function not_found_created()
+    public function not_found_created(): void
     {
         $repo = repository(DummyNotFound::class);
 
