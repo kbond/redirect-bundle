@@ -37,5 +37,5 @@ abstract class NotFoundListener
         return true;
     }
 
-    abstract public function onKernelException(ExceptionEvent $event);
+    abstract public function onKernelException(ExceptionEvent $event): void;
 }

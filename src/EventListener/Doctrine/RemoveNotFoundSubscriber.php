@@ -13,6 +13,7 @@ namespace Zenstruck\RedirectBundle\EventListener\Doctrine;
 
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Container\ContainerInterface;
+use Zenstruck\RedirectBundle\Message\RemoveNotFounds;
 use Zenstruck\RedirectBundle\Model\Redirect;
 
 /**
@@ -28,15 +29,15 @@ final class RemoveNotFoundSubscriber
 
     public function postUpdate(LifecycleEventArgs $args): void
     {
-        $this->remoteNotFoundForRedirect($args);
+        $this->removeNotFoundForRedirect($args);
     }
 
     public function postPersist(LifecycleEventArgs $args): void
     {
-        $this->remoteNotFoundForRedirect($args);
+        $this->removeNotFoundForRedirect($args);
     }
 
-    private function remoteNotFoundForRedirect(LifecycleEventArgs $args): void
+    private function removeNotFoundForRedirect(LifecycleEventArgs $args): void
     {
         $entity = $args->getObject();
 
@@ -44,6 +45,6 @@ final class RemoveNotFoundSubscriber
             return;
         }
 
-        $this->container->get('manager')->removeForRedirect($entity);
+        $this->container->get('bus')->dispatch(new RemoveNotFounds($entity->getSource()));
     }
 }

@@ -66,7 +66,7 @@ final class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
         $this->load(['redirect_class' => DummyRedirect::class]);
         $this->compile();
 
-        $this->assertContainerBuilderHasService('.zenstruck_redirect.redirect_manager');
+        $this->assertContainerBuilderHasService('.zenstruck_redirect.track_redirect_handler');
         $this->assertContainerBuilderHasService('.zenstruck_redirect.redirect_listener');
         $this->assertContainerBuilderHasService('.zenstruck_redirect.redirect.form.type');
     }
@@ -79,7 +79,7 @@ final class ZenstruckRedirectExtensionTest extends AbstractExtensionTestCase
         $this->load(['not_found_class' => DummyNotFound::class]);
         $this->compile();
 
-        $this->assertContainerBuilderHasService('.zenstruck_redirect.not_found_manager');
+        $this->assertContainerBuilderHasService('.zenstruck_redirect.track_not_found_handler');
         $this->assertContainerBuilderHasService('.zenstruck_redirect.not_found_listener');
     }
 

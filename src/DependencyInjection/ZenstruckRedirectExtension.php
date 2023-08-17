@@ -28,16 +28,24 @@ final class ZenstruckRedirectExtension extends ConfigurableExtension
     {
         $loader = new Loader\PhpFileLoader($container, new FileLocator(__DIR__.'/../../config'));
 
+        $loader->load('bus.php');
+
         if (null !== $mergedConfig['redirect_class']) {
             $loader->load('redirect.php');
-            $container->getDefinition('.zenstruck_redirect.redirect_manager')
+            $container->getDefinition('.zenstruck_redirect.track_redirect_handler')
+                ->setArgument(0, $mergedConfig['redirect_class'])
+            ;
+            $container->getDefinition('.zenstruck_redirect.redirect_listener')
+                ->setArgument(1, $mergedConfig['redirect_class'])
+            ;
+            $container->getDefinition('.zenstruck_redirect.redirect.form.type')
                 ->setArgument(0, $mergedConfig['redirect_class'])
             ;
         }
 
         if (null !== $mergedConfig['not_found_class']) {
             $loader->load('not_found.php');
-            $container->getDefinition('.zenstruck_redirect.not_found_manager')
+            $container->getDefinition('.zenstruck_redirect.track_not_found_handler')
                 ->setArgument(0, $mergedConfig['not_found_class'])
             ;
         }
@@ -55,5 +63,9 @@ final class ZenstruckRedirectExtension extends ConfigurableExtension
         }
 
         $loader->load('remove_not_found_subscriber.php');
+
+        $container->getDefinition('.zenstruck_redirect.remove_not_founds_handler')
+            ->setArgument(0, $mergedConfig['not_found_class'])
+        ;
     }
 }

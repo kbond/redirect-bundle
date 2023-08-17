@@ -48,6 +48,7 @@ final class TestKernel extends Kernel
             'router' => ['utf8' => true],
             'test' => true,
             'validation' => true,
+            'messenger' => true,
         ]);
 
         $c->loadFromExtension('zenstruck_redirect', [

@@ -9,28 +9,30 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\RedirectBundle\EventListener;
+namespace Zenstruck\RedirectBundle\Message;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
  * @internal
  */
-final class CreateNotFoundListener extends NotFoundListener
+final class MessageBusBridge
 {
     public function __construct(private ContainerInterface $container)
     {
     }
 
-    public function onKernelException(ExceptionEvent $event): void
+    public function dispatch(object $message): void
     {
-        if (!$this->isNotFoundException($event)) {
+        if ($this->container->has('bus')) {
+            $this->container->get('bus')->dispatch($message, [new DispatchAfterCurrentBusStamp()]);
+
             return;
         }
 
-        $this->container->get('manager')->createFromRequest($event->getRequest());
+        $this->container->get($message::class)($message);
     }
 }

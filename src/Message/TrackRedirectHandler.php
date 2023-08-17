@@ -9,16 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Zenstruck\RedirectBundle\Service;
+namespace Zenstruck\RedirectBundle\Message;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Zenstruck\RedirectBundle\Model\Redirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
-class RedirectManager
+final class TrackRedirectHandler
 {
     /**
      * @param class-string<Redirect> $class
@@ -27,24 +28,17 @@ class RedirectManager
     {
     }
 
-    public function findAndUpdate(string $source): ?Redirect
+    public function __invoke(TrackRedirect $message): void
     {
-        $om = $this->om();
+        $om = $this->doctrine->getManagerForClass($this->class) ?? throw new \LogicException(\sprintf('No manager found for class "%s".', $this->class));
 
-        if (!$redirect = $om->getRepository($this->class)->findOneBy(['source' => $source])) {
-            return null;
+        if (!$redirect = $om->getRepository($this->class)->findOneBy(['source' => $message->source])) {
+            return;
         }
 
-        /** @var Redirect|null $redirect */
+        /** @var Redirect $redirect */
         $redirect->increaseCount();
-        $redirect->updateLastAccessed();
+        $redirect->updateLastAccessed($message->timestamp);
         $om->flush();
-
-        return $redirect;
-    }
-
-    private function om(): ObjectManager
-    {
-        return $this->doctrine->getManagerForClass($this->class) ?? throw new \LogicException(\sprintf('No manager found for class "%s".', $this->class));
     }
 }

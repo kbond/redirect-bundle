@@ -14,6 +14,8 @@ namespace Zenstruck\RedirectBundle\EventListener;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Zenstruck\RedirectBundle\Message\TrackRedirect;
+use Zenstruck\RedirectBundle\Model\Redirect;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -22,7 +24,10 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
  */
 final class RedirectOnNotFoundListener extends NotFoundListener
 {
-    public function __construct(private ContainerInterface $container)
+    /**
+     * @param class-string<Redirect> $class
+     */
+    public function __construct(private ContainerInterface $container, private string $class)
     {
     }
 
@@ -32,12 +37,16 @@ final class RedirectOnNotFoundListener extends NotFoundListener
             return;
         }
 
-        $redirect = $this->container->get('manager')->findAndUpdate($event->getRequest()->getPathInfo());
+        $path = $event->getRequest()->getPathInfo();
+        $redirect = $this->container->get('doctrine')->getRepository($this->class)->findOneBy(['source' => $path]);
 
-        if (null === $redirect) {
+        if (!$redirect) {
             return;
         }
 
+        $this->container->get('bus')->dispatch(new TrackRedirect($path, new \DateTimeImmutable('now')));
+
+        /** @var Redirect $redirect */
         $event->setResponse(new RedirectResponse(
             $redirect->getDestination(),
             $redirect->isPermanent() ? 301 : 302
